@@ -277,8 +277,27 @@ button:hover{
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBGohbnyBMtrOtp9DIB7IvnwM-BH2malSs",
+  authDomain: "lunch-manager-af859.firebaseapp.com",
+  projectId: "lunch-manager-af859",
+  storageBucket: "lunch-manager-af859.firebasestorage.app",
+  messagingSenderId: "934755274282",
+  appId: "1:934755274282:web:44457ae291909bb562bd53",
+  measurementId: "G-19SPF5JMG4"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 function adminLogin(){
 
     let admin =
@@ -399,44 +418,166 @@ const employees = [
 ];
 
 
-window.onload = function(){
+window.onload = async function(){
+
 let today = new Date();
 
-let dateText =
-    today.getFullYear() + "년 " +
-    (today.getMonth() + 1) + "월 " +
-    today.getDate() + "일";
+document.getElementById("todayDate").textContent =
+today.getFullYear() + "년 " +
+(today.getMonth()+1) + "월 " +
+today.getDate() + "일";
 
-document.getElementById("todayDate")
-    .textContent = dateText;
+const snapshot =
+await getDocs(collection(db,"mealResponses"));
+
 let mealCount = 0;
 let noMealCount = 0;
 let guestCount = 0;
 
-employees.forEach(function(emp){
+let answeredNames = [];
 
-    let meal =
-        localStorage.getItem(
-            "meal_" + emp.name
-        );
+let deptMeal = {};
+let deptNoMeal = {};
 
-    let guest =
-        Number(
-            localStorage.getItem(
-                "guest_" + emp.name
-            )
-        ) || 0;
+const mealList =
+document.getElementById("mealList");
 
-    if(meal === "식사"){
-        mealCount++;
-        guestCount += guest;
-    }
+const noMealList =
+document.getElementById("noMealList");
 
-    if(meal === "미식사"){
-        noMealCount++;
-    }
+const guestList =
+document.getElementById("guestList");
+
+snapshot.forEach((doc)=>{
+
+const data = doc.data();
+
+answeredNames.push(data.name);
+
+if(data.meal === "식사"){
+
+mealCount++;
+
+let li = document.createElement("li");
+li.textContent =
+data.name + " (" + data.department + ")";
+mealList.appendChild(li);
+
+}
+
+if(data.meal === "미식사"){
+
+noMealCount++;
+
+let li = document.createElement("li");
+li.textContent =
+data.name + " (" + data.department + ")";
+noMealList.appendChild(li);
+
+}
+
+guestCount += Number(data.guest || 0);
+
+if(data.guest > 0){
+
+let li = document.createElement("li");
+
+li.textContent =
+data.name +
+" : 외부손님 " +
+data.guest +
+"명";
+
+guestList.appendChild(li);
+
+}
+
+if(!deptMeal[data.department]){
+
+deptMeal[data.department] = 0;
+deptNoMeal[data.department] = 0;
+
+}
+
+if(data.meal === "식사"){
+deptMeal[data.department]++;
+}
+
+if(data.meal === "미식사"){
+deptNoMeal[data.department]++;
+}
 
 });
+
+document.getElementById("mealCount").textContent =
+mealCount;
+
+document.getElementById("noMealCount").textContent =
+noMealCount;
+
+document.getElementById("guestCount").textContent =
+guestCount;
+
+document.getElementById("totalCount").textContent =
+mealCount + guestCount;
+
+let rate =
+Math.round(
+(answeredNames.length / employees.length) * 100
+);
+
+document.getElementById("replyRate").textContent =
+answeredNames.length +
+" / " +
+employees.length +
+"명 (" +
+rate +
+"%)";
+
+const employeeList =
+document.getElementById("employeeList");
+
+employees.forEach(emp=>{
+
+if(!answeredNames.includes(emp.name)){
+
+let li =
+document.createElement("li");
+
+li.textContent =
+emp.name +
+" (" +
+emp.dept +
+")";
+
+employeeList.appendChild(li);
+
+}
+
+});
+
+const departmentList =
+document.getElementById("departmentList");
+
+for(let dept in deptMeal){
+
+let p =
+document.createElement("p");
+
+p.textContent =
+dept +
+" : 식사 " +
+deptMeal[dept] +
+"명 / 미식사 " +
+deptNoMeal[dept] +
+"명";
+
+departmentList.appendChild(p);
+
+}
+
+};
+
 
 document.getElementById("mealCount")
     .textContent = mealCount;
