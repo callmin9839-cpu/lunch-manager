@@ -122,7 +122,30 @@ button {
 </p>
 
 </div>
-<script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    setDoc
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBGohbnyBMtrOtp9DIB7IvnwM-BH2malSs",
+  authDomain: "lunch-manager-af859.firebaseapp.com",
+  projectId: "lunch-manager-af859",
+  storageBucket: "lunch-manager-af859.firebasestorage.app",
+  messagingSenderId: "934755274282",
+  appId: "1:934755274282:web:44457ae291909bb562bd53",
+  measurementId: "G-19SPF5JMG4"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
 function updateDepartment() {
 
     let name =
