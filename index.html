@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중식 식수관리</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.box {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>중식 식수관리</h1>
+
+<div class="box">
+
+<p><strong>이름</strong></p>
+
+<select id="userName" onchange="updateDepartment()">
+
+<option>이승헌</option>
+<option>박상익</option>
+<option>이주형</option>
+<option>민성환</option>
+<option>서준호</option>
+<option>하유빈</option>
+<option>김민영</option>
+<option>박종희</option>
+<option>임정은</option>
+
+<option>오인환</option>
+<option>천병희</option>
+<option>허동일</option>
+<option>김철홍</option>
+<option>김형록</option>
+<option>김경식</option>
+<option>양지석</option>
+<option>김주현</option>
+<option>장은정</option>
+<option>김송주</option>
+<option>김용준</option>
+
+<option>조재성</option>
+<option>김찬종</option>
+<option>김중현</option>
+<option>김정균</option>
+<option>이한얼</option>
+<option>김창민</option>
+<option>박지윤</option>
+<option>장준희</option>
+<option>이경태</option>
+<option>고병국</option>
+<option>박현중</option>
+
+<option>장병천</option>
+<option>김승준</option>
+<option>강도영</option>
+
+</select>
+
+<br><br>
+
+<p>
+소속부서 :
+<span id="department">보상관리부</span>
+</p>
+
+<label>
+<input type="radio" name="meal" value="식사">
+식사
+</label>
+
+<br><br>
+
+<label>
+<input type="radio" name="meal" value="미식사">
+미식사
+</label>
+
+<br><br>
+
+외부손님
+
+<input type="number" id="guestCount" value="0">
+
+<br><br>
+
+<button id="saveButton" onclick="saveMeal()">저장</button>
+<p id="deadlineMessage"></p>
+
+<hr>
+
+<h3>오늘 신청상태</h3>
+
+<p id="status">
+미신청
+</p>
+
+</div>
+<script>
+function updateDepartment() {
+
+    let name =
+        document.getElementById("userName").value;
+
+    let department = "";
+
+    // 보상관리부
+    if([
+        "이승헌","박상익","이주형","민성환",
+        "서준호","하유빈","김민영",
+        "박종희","임정은"
+    ].includes(name)){
+
+        department = "보상관리부";
+
+    }
+
+    // 공사관리부
+    else if([
+        "오인환","천병희","허동일","김철홍",
+        "김형록","김경식","양지석",
+        "김주현","장은정","김송주","김용준"
+    ].includes(name)){
+
+        department = "공사관리부";
+
+    }
+
+    // 품질안전부
+    else if([
+        "조재성","김찬종","김중현","김정균",
+        "이한얼","김창민","박지윤",
+        "장준희","이경태","고병국","박현중"
+    ].includes(name)){
+
+        department = "품질안전부";
+
+    }
+
+    // 감리단
+    else if([
+        "장병천","김승준","강도영"
+    ].includes(name)){
+
+        department = "감리단";
+
+    }
+
+    document.getElementById("department").innerText =
+        department;
+}
+window.onload = function() {
+
+    let savedName = localStorage.getItem("userName");
+
+    if(savedName){
+
+        document.getElementById("userName").value = savedName;
+    }
+
+let mealStatus = localStorage.getItem("mealStatus");
+let guestCount = localStorage.getItem("guestCount");
+let saveTime = localStorage.getItem("saveTime");
+
+if(mealStatus){
+
+    document.getElementById("status").innerHTML =
+        mealStatus +
+        " 신청 완료<br>" +
+        "외부손님 : " + guestCount + "명<br>" +
+        "저장시간 : " + saveTime;
+
+}
+
+
+
+}
+updateDepartment();
+function saveMeal() {
+
+    let name = document.getElementById("userName").value;
+
+    localStorage.setItem("userName", name);
+
+    let meal =
+        document.querySelector('input[name="meal"]:checked');
+
+    if (!meal) {
+
+        alert("식사 여부를 선택해주세요.");
+
+        return;
+
+    }
+
+    let guest =
+        document.getElementById("guestCount").value;
+
+    let now = new Date();
+
+    let time =
+        now.getHours() + ":" +
+        String(now.getMinutes()).padStart(2, "0");
+
+    // 저장
+    localStorage.setItem("mealStatus", meal.value);
+    localStorage.setItem("guestCount", guest);
+    localStorage.setItem("saveTime", time);
+    localStorage.setItem(
+    "meal_" + name,
+    meal.value
+);
+
+localStorage.setItem(
+    "guest_" + name,
+    guest
+);
+
+    localStorage.setItem(
+    "answer_" + name,
+    "Y"
+);
+
+    // 화면 표시
+    document.getElementById("status").innerHTML =
+        meal.value +
+        " 신청 완료<br>" +
+        "외부손님 : " + guest + "명<br>" +
+        "저장시간 : " + time;
+
+    alert(name + "님의 신청이 완료되었습니다.");
+
+}
+
+</script>
+
+</body>
+</html>

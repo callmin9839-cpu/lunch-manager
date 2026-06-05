@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중식 식수관리 관리자</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+.box{
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:20px;
+}
+
+.count{
+    font-size:20px;
+    margin:10px 0;
+}
+
+.total{
+    font-size:28px;
+    font-weight:bold;
+    color:#1565c0;
+    text-align:center;
+    margin-top:20px;
+    background:#e3f2fd;
+    padding:15px;
+    border-radius:12px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#1976d2;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+button:hover{
+    opacity:0.9;
+}
+
+.card{
+    background:#f5f7fa;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:10px;
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.card-title{
+    font-size:16px;
+    color:#666;
+}
+
+.card-value{
+    font-size:32px;
+    font-weight:bold;
+    margin-top:10px;
+}
+
+.meal-card{
+    background:#e3f2fd;
+}
+
+.nomeal-card{
+    background:#f5f5f5;
+}
+
+.guest-card{
+    background:#fff3e0;
+}
+
+.reply-card{
+    background:#f1f8e9;
+}
+.dashboard{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+.menu-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:20px;
+}
+
+.reset-btn{
+    grid-column:1 / span 2;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>중식 식수관리 관리자</h1>
+
+<div class="box">
+
+<h3>관리자 선택</h3>
+
+<select id="adminName">
+<option>임정은</option>
+<option>민성환</option>
+</select>
+
+<br><br>
+
+<input
+    type="password"
+    id="adminPassword"
+    placeholder="비밀번호 입력">
+
+<br><br>
+
+<button onclick="adminLogin()">
+관리자 접속
+</button>
+
+</div>
+
+<div id="adminPage" style="display:none;">
+
+    <hr>
+
+<div class="menu-grid">
+
+<button onclick="showPage('statusPage')">
+오늘 현황
+</button>
+
+<button onclick="showPage('departmentPage')">
+부서별 현황
+</button>
+
+<button onclick="showPage('noReplyPage')">
+미응답자
+</button>
+
+<button onclick="showPage('guestPage')">
+외부손님 현황
+</button>
+
+<button onclick="showPage('applicantPage')">
+신청자 명단
+</button>
+
+<button
+    class="reset-btn"
+    onclick="resetData()">
+오늘 데이터 초기화
+</button>
+
+</div>
+
+<hr>
+
+<div id="statusPage">
+<h2>오늘 현황</h2>
+
+<p id="todayDate"></p>
+
+<div class="dashboard">
+
+<div class="card meal-card">
+
+<div class="card-title">
+식사
+</div>
+
+<div class="card-value">
+<span id="mealCount">0</span>명
+</div>
+
+</div>
+
+<div class="card nomeal-card">
+
+<div class="card-title">
+미식사
+</div>
+
+<div class="card-value">
+<span id="noMealCount">0</span>명
+</div>
+
+</div>
+
+<div class="card guest-card">
+
+<div class="card-title">
+외부손님
+</div>
+
+<div class="card-value">
+<span id="guestCount">0</span>명
+</div>
+
+</div>
+
+<div class="card reply-card">
+
+<div class="card-title">
+응답률
+</div>
+
+<div class="card-value">
+<span id="replyRate">0%</span>
+</div>
+
+</div>
+
+</div>
+
+<hr>
+
+<div class="total">
+총 식수 : <span id="totalCount">0</span>명
+</div>
+
+</div>
+
+<div id="departmentPage" style="display:none;">
+
+<h2>부서별 현황</h2>
+
+<div id="departmentList">
+</div>
+
+</div>
+<div id="noReplyPage" style="display:none;">
+
+<h2>미응답자</h2>
+
+<ul id="employeeList">
+</ul>
+
+</div>
+<div id="guestPage" style="display:none;">
+
+<h2>외부손님 현황</h2>
+
+<ul id="guestList">
+</ul>
+
+</div>
+
+<div id="applicantPage" style="display:none;">
+
+<h2>신청자 명단</h2>
+
+<h3>식사 신청</h3>
+<ul id="mealList"></ul>
+
+<h3>미식사 신청</h3>
+<ul id="noMealList"></ul>
+
+</div>
+
+</div>
+
+<script>
+
+function adminLogin(){
+
+    let admin =
+        document.getElementById("adminName").value;
+
+    let password =
+        document.getElementById(
+            "adminPassword"
+        ).value;
+
+    if(password !== "1234"){
+
+        alert("비밀번호가 틀렸습니다.");
+
+        return;
+
+    }
+
+    document.getElementById("adminPage")
+        .style.display = "block";
+
+    alert(admin + " 관리자님 환영합니다.");
+
+}
+function showPage(pageId){
+
+    document.getElementById("statusPage")
+        .style.display = "none";
+
+    document.getElementById("departmentPage")
+        .style.display = "none";
+
+    document.getElementById("noReplyPage")
+        .style.display = "none";
+
+    document.getElementById("guestPage")
+        .style.display = "none";
+
+   document.getElementById("applicantPage")
+    .style.display = "none";
+
+    document.getElementById(pageId)
+        .style.display = "block";
+
+}
+function resetData(){
+
+    let ok =
+        confirm(
+            "오늘 데이터를 모두 삭제하시겠습니까?"
+        );
+
+    if(!ok){
+        return;
+    }
+
+    employees.forEach(function(emp){
+
+        localStorage.removeItem(
+            "answer_" + emp.name
+        );
+
+        localStorage.removeItem(
+            "meal_" + emp.name
+        );
+
+        localStorage.removeItem(
+            "guest_" + emp.name
+        );
+
+    });
+
+    alert("초기화 완료");
+
+    location.reload();
+
+}
+const employees = [
+
+    {name:"이승헌", dept:"보상관리부"},
+    {name:"박상익", dept:"보상관리부"},
+    {name:"이주형", dept:"보상관리부"},
+    {name:"민성환", dept:"보상관리부"},
+    {name:"서준호", dept:"보상관리부"},
+    {name:"하유빈", dept:"보상관리부"},
+    {name:"김민영", dept:"보상관리부"},
+    {name:"박종희", dept:"보상관리부"},
+    {name:"임정은", dept:"보상관리부"},
+
+    {name:"오인환", dept:"공사관리부"},
+    {name:"천병희", dept:"공사관리부"},
+    {name:"허동일", dept:"공사관리부"},
+    {name:"김철홍", dept:"공사관리부"},
+    {name:"김형록", dept:"공사관리부"},
+    {name:"김경식", dept:"공사관리부"},
+    {name:"양지석", dept:"공사관리부"},
+    {name:"김주현", dept:"공사관리부"},
+    {name:"장은정", dept:"공사관리부"},
+    {name:"김송주", dept:"공사관리부"},
+    {name:"김용준", dept:"공사관리부"},
+
+    {name:"조재성", dept:"품질안전부"},
+    {name:"김찬종", dept:"품질안전부"},
+    {name:"김중현", dept:"품질안전부"},
+    {name:"김정균", dept:"품질안전부"},
+    {name:"이한얼", dept:"품질안전부"},
+    {name:"김창민", dept:"품질안전부"},
+    {name:"박지윤", dept:"품질안전부"},
+    {name:"장준희", dept:"품질안전부"},
+    {name:"이경태", dept:"품질안전부"},
+    {name:"고병국", dept:"품질안전부"},
+    {name:"박현중", dept:"품질안전부"},
+
+    {name:"장병천", dept:"감리단"},
+    {name:"김승준", dept:"감리단"},
+    {name:"강도영", dept:"감리단"}
+
+];
+
+
+window.onload = function(){
+let today = new Date();
+
+let dateText =
+    today.getFullYear() + "년 " +
+    (today.getMonth() + 1) + "월 " +
+    today.getDate() + "일";
+
+document.getElementById("todayDate")
+    .textContent = dateText;
+let mealCount = 0;
+let noMealCount = 0;
+let guestCount = 0;
+
+employees.forEach(function(emp){
+
+    let meal =
+        localStorage.getItem(
+            "meal_" + emp.name
+        );
+
+    let guest =
+        Number(
+            localStorage.getItem(
+                "guest_" + emp.name
+            )
+        ) || 0;
+
+    if(meal === "식사"){
+        mealCount++;
+        guestCount += guest;
+    }
+
+    if(meal === "미식사"){
+        noMealCount++;
+    }
+
+});
+
+document.getElementById("mealCount")
+    .textContent = mealCount;
+
+document.getElementById("noMealCount")
+    .textContent = noMealCount;
+
+document.getElementById("guestCount")
+    .textContent = guestCount;
+
+document.getElementById("totalCount")
+    .textContent =
+        mealCount + guestCount;
+        let answeredCount =
+    mealCount + noMealCount;
+
+let rate =
+    Math.round(
+        (answeredCount / employees.length) * 100
+    );
+
+document.getElementById("replyRate")
+    .textContent =
+        answeredCount +
+        " / " +
+        employees.length +
+        "명 (" +
+        rate +
+        "%)";
+        let replyRateEl =
+    document.getElementById("replyRate");
+
+if(rate >= 80){
+
+    replyRateEl.style.color = "green";
+
+}
+else if(rate >= 50){
+
+    replyRateEl.style.color = "orange";
+
+}
+else{
+
+    replyRateEl.style.color = "red";
+
+}
+
+    let list =
+        document.getElementById("employeeList");
+
+   employees.forEach(function(emp){
+
+    let answered =
+        localStorage.getItem(
+            "answer_" + emp.name
+        );
+
+    if(!answered){
+
+        let li =
+            document.createElement("li");
+
+        li.textContent =
+            emp.name +
+            " (" +
+            emp.dept +
+            ")";
+
+        list.appendChild(li);
+
+    }
+
+});
+
+let deptCount = {};
+let deptAnswered = {};
+let deptMeal = {};
+let deptNoMeal = {};
+
+employees.forEach(function(emp){
+
+    if(!deptCount[emp.dept]){
+        deptCount[emp.dept] = 0;
+        deptAnswered[emp.dept] = 0;
+        deptMeal[emp.dept] = 0;
+        deptNoMeal[emp.dept] = 0;
+    }
+
+    deptCount[emp.dept]++;
+
+    let answered =
+        localStorage.getItem(
+            "answer_" + emp.name
+        );
+
+    if(answered){
+        deptAnswered[emp.dept]++;
+    }
+
+    let meal =
+        localStorage.getItem(
+            "meal_" + emp.name
+        );
+
+    if(meal === "식사"){
+        deptMeal[emp.dept]++;
+    }
+
+    if(meal === "미식사"){
+        deptNoMeal[emp.dept]++;
+    }
+
+});
+
+let deptList =
+    document.getElementById("departmentList");
+
+for(let dept in deptCount){
+
+    let p =
+        document.createElement("p");
+
+    p.textContent =
+    dept +
+    " : 식사 " +
+    deptMeal[dept] +
+    "명 / 미식사 " +
+    deptNoMeal[dept] +
+    "명";
+
+    deptList.appendChild(p);
+
+}
+let guestList =
+    document.getElementById("guestList");
+
+employees.forEach(function(emp){
+
+    let guest =
+        Number(
+            localStorage.getItem(
+                "guest_" + emp.name
+            )
+        ) || 0;
+
+    if(guest > 0){
+
+        let li =
+            document.createElement("li");
+
+        li.textContent =
+            emp.name +
+            " : 외부손님 " +
+            guest +
+            "명";
+
+        guestList.appendChild(li);
+
+    }
+
+});
+let mealList =
+    document.getElementById("mealList");
+
+let noMealList =
+    document.getElementById("noMealList");
+
+employees.forEach(function(emp){
+
+    let meal =
+        localStorage.getItem(
+            "meal_" + emp.name
+        );
+
+    if(meal === "식사"){
+
+        let li =
+            document.createElement("li");
+
+        li.textContent =
+    emp.name +
+    " (" +
+    emp.dept +
+    ")";
+
+        mealList.appendChild(li);
+
+    }
+
+    if(meal === "미식사"){
+
+        let li =
+            document.createElement("li");
+
+        li.textContent =
+    emp.name +
+    " (" +
+    emp.dept +
+    ")";
+
+        noMealList.appendChild(li);
+
+    }
+
+});
+
+}
+</script>
+
+</body>
+</html>
