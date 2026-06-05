@@ -225,7 +225,7 @@ if(mealStatus){
 
 }
 updateDepartment();
-function saveMeal() {
+async function saveMeal() {
 
     let name = document.getElementById("userName").value;
 
@@ -255,19 +255,18 @@ function saveMeal() {
     localStorage.setItem("mealStatus", meal.value);
     localStorage.setItem("guestCount", guest);
     localStorage.setItem("saveTime", time);
-    localStorage.setItem(
-    "meal_" + name,
-    meal.value
-);
-
-localStorage.setItem(
-    "guest_" + name,
-    guest
-);
-
-    localStorage.setItem(
-    "answer_" + name,
-    "Y"
+await setDoc(
+    doc(db, "mealResponses", name),
+    {
+        name: name,
+        meal: meal.value,
+        guest: Number(guest),
+        answer: "Y",
+        saveTime: time,
+        department:
+            document.getElementById("department")
+                .innerText
+    }
 );
 
     // 화면 표시
