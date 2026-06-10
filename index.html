@@ -89,7 +89,15 @@ button {
 소속부서 :
 <span id="department">보상관리부</span>
 </p>
+    
+<p><strong>신청일</strong></p>
 
+<input
+    type="date"
+    id="mealDate">
+
+<br><br>
+    
 <label>
 <input type="radio" name="meal" value="식사">
 식사
@@ -206,6 +214,11 @@ if(savedName){
 
     document.getElementById("userName").value = savedName;
 }
+    
+const today = new Date();
+
+document.getElementById("mealDate").value =
+    today.toISOString().split("T")[0];
 
 updateDepartment();
 
@@ -247,6 +260,9 @@ async function saveMeal() {
     let guest =
         document.getElementById("guestCount").value;
 
+    let mealDate =
+    document.getElementById("mealDate").value;
+
     let now = new Date();
 
     let time =
@@ -258,17 +274,22 @@ async function saveMeal() {
     localStorage.setItem("guestCount", guest);
     localStorage.setItem("saveTime", time);
 await setDoc(
-    doc(db, "mealResponses", name),
+    doc(
+        db,
+        "mealResponses",
+        name + "_" + mealDate
+    ),
     {
-        name: name,
-        meal: meal.value,
-        guest: Number(guest),
-        answer: "Y",
-        saveTime: time,
-        department:
-            document.getElementById("department")
-                .innerText
-    }
+    name: name,
+    mealDate: mealDate,
+    meal: meal.value,
+    guest: Number(guest),
+    answer: "Y",
+    saveTime: time,
+    department:
+        document.getElementById("department")
+            .innerText
+}
 );
 
     // 화면 표시
