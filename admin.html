@@ -316,10 +316,6 @@ function adminLogin(){
 
     }
     
-window.adminLogin = adminLogin;
-window.showPage = showPage;
-window.resetData = resetData;
-    
     document.getElementById("adminPage")
         .style.display = "block";
 
@@ -357,9 +353,7 @@ function resetData(){
     if(!ok){
         return;
     }
-window.adminLogin = adminLogin;
-window.showPage = showPage;
-window.resetData = resetData;
+
     employees.forEach(function(emp){
 
         localStorage.removeItem(
@@ -583,6 +577,10 @@ departmentList.appendChild(p);
 }
 
 };
+
+window.adminLogin = adminLogin;
+window.showPage = showPage;
+window.resetData = resetData;
 
 </script>
 
