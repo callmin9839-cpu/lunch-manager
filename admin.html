@@ -315,7 +315,11 @@ function adminLogin(){
         return;
 
     }
-
+    
+window.adminLogin = adminLogin;
+window.showPage = showPage;
+window.resetData = resetData;
+    
     document.getElementById("adminPage")
         .style.display = "block";
 
