@@ -174,7 +174,15 @@ button:hover{
 <hr>
 
 <div id="statusPage">
-<h2>오늘 현황</h2>
+<h2>조회 날짜</h2>
+
+<input
+    type="date"
+    id="searchDate">
+
+<button onclick="loadData()">
+조회
+</button>
 
 <p id="todayDate"></p>
 
@@ -422,15 +430,18 @@ const employees = [
 
 ];
 
+    async function loadData(){
+
+alert("조회 버튼 테스트");
+
+}
 
 window.onload = async function(){
 
-let today = new Date();
+const today = new Date();
 
-document.getElementById("todayDate").textContent =
-today.getFullYear() + "년 " +
-(today.getMonth()+1) + "월 " +
-today.getDate() + "일";
+document.getElementById("searchDate").value =
+today.toISOString().split("T")[0];
 
 const snapshot =
 await getDocs(collection(db,"mealResponses"));
@@ -586,6 +597,7 @@ departmentList.appendChild(p);
 window.adminLogin = adminLogin;
 window.showPage = showPage;
 window.resetData = resetData;
+window.loadData = loadData;
 
 </script>
 
