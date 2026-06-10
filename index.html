@@ -202,10 +202,12 @@ window.onload = function() {
 
     let savedName = localStorage.getItem("userName");
 
-    if(savedName){
+if(savedName){
 
-        document.getElementById("userName").value = savedName;
-    }
+    document.getElementById("userName").value = savedName;
+}
+
+updateDepartment();
 
 let mealStatus = localStorage.getItem("mealStatus");
 let guestCount = localStorage.getItem("guestCount");
@@ -221,10 +223,10 @@ if(mealStatus){
 
 }
 
-
+updateDepartment();
 
 }
-updateDepartment();
+
 async function saveMeal() {
 
     let name = document.getElementById("userName").value;
