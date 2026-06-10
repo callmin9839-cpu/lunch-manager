@@ -283,9 +283,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebas
 import {
   getFirestore,
   collection,
-  getDocs
+  getDocs,
+  deleteDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBGohbnyBMtrOtp9DIB7IvnwM-BH2malSs",
   authDomain: "lunch-manager-af859.firebaseapp.com",
@@ -343,32 +344,36 @@ function showPage(pageId){
         .style.display = "block";
 
 }
-function resetData(){
+async function resetData(){
 
-    let ok =
-        confirm(
-            "오늘 데이터를 모두 삭제하시겠습니까?"
-        );
+    let ok = confirm(
+        "오늘 데이터를 모두 삭제하시겠습니까?"
+    );
 
     if(!ok){
         return;
     }
 
-    employees.forEach(function(emp){
-
-        localStorage.removeItem(
-            "answer_" + emp.name
+    const snapshot =
+        await getDocs(
+            collection(db, "mealResponses")
         );
 
-        localStorage.removeItem(
-            "meal_" + emp.name
-        );
+    const promises = [];
 
-        localStorage.removeItem(
-            "guest_" + emp.name
+    snapshot.forEach((item)=>{
+
+        promises.push(
+            deleteDoc(
+                doc(db,
+                    "mealResponses",
+                    item.id)
+            )
         );
 
     });
+
+    await Promise.all(promises);
 
     alert("초기화 완료");
 
