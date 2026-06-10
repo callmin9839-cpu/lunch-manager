@@ -468,6 +468,13 @@ snapshot.forEach((doc)=>{
 
 const data = doc.data();
 
+const selectedDate =
+document.getElementById("searchDate").value;
+
+if(data.mealDate !== selectedDate){
+    return;
+}
+
 answeredNames.push(data.name);
 
 if(data.meal === "식사"){
