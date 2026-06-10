@@ -328,6 +328,8 @@ function adminLogin(){
     document.getElementById("adminPage")
         .style.display = "block";
 
+loadData();
+
     alert(admin + " 관리자님 환영합니다.");
 
 }
@@ -435,17 +437,6 @@ async function loadData(){
 const selectedDate =
 document.getElementById("searchDate").value;
 
-alert(selectedDate);
-
-}
-
-window.onload = async function(){
-
-const today = new Date();
-
-document.getElementById("searchDate").value =
-today.toISOString().split("T")[0];
-
 const snapshot =
 await getDocs(collection(db,"mealResponses"));
 
@@ -467,9 +458,18 @@ document.getElementById("noMealList");
 const guestList =
 document.getElementById("guestList");
 
+mealList.innerHTML = "";
+noMealList.innerHTML = "";
+guestList.innerHTML = "";
+
+document.getElementById("employeeList").innerHTML = "";
+document.getElementById("departmentList").innerHTML = "";
+
 snapshot.forEach((doc)=>{
 
 const data = doc.data();
+
+console.log(data);
 
 const selectedDate =
 document.getElementById("searchDate").value;
@@ -587,22 +587,30 @@ document.getElementById("departmentList");
 
 for(let dept in deptMeal){
 
-let p =
-document.createElement("p");
+    let p = document.createElement("p");
 
-p.textContent =
-dept +
-" : 식사 " +
-deptMeal[dept] +
-"명 / 미식사 " +
-deptNoMeal[dept] +
-"명";
+    p.textContent =
+    dept +
+    " : 식사 " +
+    deptMeal[dept] +
+    "명 / 미식사 " +
+    deptNoMeal[dept] +
+    "명";
 
-departmentList.appendChild(p);
+    departmentList.appendChild(p);
 
 }
 
-};
+}   // ← loadData 종료
+    
+window.onload = function(){
+
+    const today = new Date();
+
+    document.getElementById("searchDate").value =
+    today.toISOString().split("T")[0];
+
+}
 
 window.adminLogin = adminLogin;
 window.showPage = showPage;
