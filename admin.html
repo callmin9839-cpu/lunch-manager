@@ -166,7 +166,7 @@ button:hover{
 <button
     class="reset-btn"
     onclick="resetData()">
-오늘 데이터 초기화
+선택 날짜 데이터 초기화
 </button>
 
 </div>
@@ -356,8 +356,17 @@ function showPage(pageId){
 }
 async function resetData(){
 
+    const selectedDate =
+    document.getElementById("searchDate").value;
+
+    if(!selectedDate){
+        alert("조회 날짜를 선택해주세요.");
+        return;
+    }
+
     let ok = confirm(
-        "오늘 데이터를 모두 삭제하시겠습니까?"
+        selectedDate +
+        " 데이터만 삭제하시겠습니까?"
     );
 
     if(!ok){
@@ -365,31 +374,40 @@ async function resetData(){
     }
 
     const snapshot =
-        await getDocs(
-            collection(db, "mealResponses")
-        );
+    await getDocs(
+        collection(db, "mealResponses")
+    );
 
     const promises = [];
 
     snapshot.forEach((item)=>{
 
-        promises.push(
-            deleteDoc(
-                doc(db,
-                    "mealResponses",
-                    item.id)
-            )
-        );
+        const data = item.data();
+
+        if(data.mealDate === selectedDate){
+
+            promises.push(
+                deleteDoc(
+                    doc(
+                        db,
+                        "mealResponses",
+                        item.id
+                    )
+                )
+            );
+
+        }
 
     });
 
     await Promise.all(promises);
 
-    alert("초기화 완료");
+    alert(selectedDate + " 데이터 삭제 완료");
 
-    location.reload();
+    loadData();
 
 }
+    
 const employees = [
 
     {name:"이승헌", dept:"보상관리부"},
