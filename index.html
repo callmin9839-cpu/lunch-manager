@@ -317,7 +317,7 @@ await setDoc(
 
 }
 
-    async function loadMyStatus(){
+async function loadMyStatus(){
 
     const name =
     document.getElementById("userName").value;
@@ -356,8 +356,39 @@ await setDoc(
 
 }
 
+async function cancelMyMeal(){
+
+    const name =
+    document.getElementById("userName").value;
+
+    const mealDate =
+    document.getElementById("mealDate").value;
+
+    const ok = confirm(
+        "신청을 취소하시겠습니까?"
+    );
+
+    if(!ok){
+        return;
+    }
+
+    await deleteDoc(
+        doc(
+            db,
+            "mealResponses",
+            name + "_" + mealDate
+        )
+    );
+
+    document.getElementById("status").innerHTML =
+    "신청 취소 완료";
+
+    alert("신청이 취소되었습니다.");
+}
+
 window.saveMeal = saveMeal;
 window.loadMyStatus = loadMyStatus;
+window.cancelMyMeal = cancelMyMeal;
 
 </script>
 
