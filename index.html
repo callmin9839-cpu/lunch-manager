@@ -242,6 +242,8 @@ updateDepartment();
 
 async function saveMeal() {
 
+    updateDepartment();
+
     let name = document.getElementById("userName").value;
 
     localStorage.setItem("userName", name);
