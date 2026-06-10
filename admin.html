@@ -353,7 +353,9 @@ function resetData(){
     if(!ok){
         return;
     }
-
+window.adminLogin = adminLogin;
+window.showPage = showPage;
+window.resetData = resetData;
     employees.forEach(function(emp){
 
         localStorage.removeItem(
