@@ -249,11 +249,22 @@ let saveTime = localStorage.getItem("saveTime");
 
 if(mealStatus){
 
-    document.getElementById("status").innerHTML =
-        mealStatus +
-        " 신청 완료<br>" +
-        "외부손님 : " + guestCount + "명<br>" +
-        "저장시간 : " + saveTime;
+const status = document.getElementById("status");
+
+status.className = "status-card status-ok";
+
+status.innerHTML = `
+<div class="status-title">
+✅ ${meal.value} 신청 완료
+</div>
+
+<div class="status-detail">
+👤 ${name}<br>
+🍱 ${meal.value}<br>
+👥 외부손님 ${guest}명<br>
+🕒 ${time}
+</div>
+`;
 
 }
 
@@ -318,11 +329,22 @@ await setDoc(
 );
 
     // 화면 표시
-    document.getElementById("status").innerHTML =
-        meal.value +
-        " 신청 완료<br>" +
-        "외부손님 : " + guest + "명<br>" +
-        "저장시간 : " + time;
+   const status = document.getElementById("status");
+
+status.className = "status-card status-ok";
+
+status.innerHTML = `
+<div class="status-title">
+✅ ${data.meal} 신청 완료
+</div>
+
+<div class="status-detail">
+👤 ${data.name}<br>
+📅 ${data.mealDate}<br>
+👥 외부손님 ${data.guest}명<br>
+🕒 ${data.saveTime}
+</div>
+`;
 
     alert(name + "님의 신청이 완료되었습니다.");
 
@@ -348,8 +370,19 @@ async function loadMyStatus(){
 
     if(!docSnap.exists()){
 
-        document.getElementById("status").innerHTML =
-        "신청내역이 없습니다.";
+  const status = document.getElementById("status");
+
+status.className = "status-card status-no";
+
+status.innerHTML = `
+<div class="status-title">
+❌ 미신청
+</div>
+
+<div class="status-detail">
+오늘 신청내역이 없습니다.
+</div>
+`;
 
         return;
     }
