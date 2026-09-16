@@ -29,6 +29,30 @@ button {
     margin-top: 10px;
     font-size: 16px;
 }
+
+.status-card {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.status-ok {
+    background: #e8f5e9;
+}
+
+.status-no {
+    background: #f5f5f5;
+}
+
+.status-title {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.status-detail {
+    line-height: 1.7;
+}
 </style>
 
 </head>
@@ -43,6 +67,7 @@ button {
 
 <select id="userName" onchange="updateDepartment()">
 
+<!-- 보상관리부 -->
 <option>이승헌</option>
 <option>박상익</option>
 <option>이주형</option>
@@ -53,8 +78,8 @@ button {
 <option>박종희</option>
 <option>임정은</option>
 <option>최기훈</option>
-<option>윤지원</option>
 
+<!-- 공사관리부 -->
 <option>오인환</option>
 <option>천병희</option>
 <option>허동일</option>
@@ -64,9 +89,10 @@ button {
 <option>양지석</option>
 <option>김주현</option>
 <option>장은정</option>
-<option>김송주</option>
 <option>김용준</option>
+<option>주승호</option>
 
+<!-- 품질안전부 -->
 <option>조재성</option>
 <option>김찬종</option>
 <option>김중현</option>
@@ -77,9 +103,9 @@ button {
 <option>장준희</option>
 <option>이경태</option>
 <option>고병국</option>
-<option>박현중</option>
 <option>임대경</option>
 
+<!-- 감리단 -->
 <option>장병천</option>
 <option>김승준</option>
 <option>강도영</option>
@@ -92,7 +118,7 @@ button {
 소속부서 :
 <span id="department">보상관리부</span>
 </p>
-    
+
 <p><strong>신청일</strong></p>
 
 <input
@@ -100,7 +126,7 @@ button {
     id="mealDate">
 
 <br><br>
-    
+
 <label>
 <input type="radio" name="meal" value="식사">
 식사
@@ -117,11 +143,12 @@ button {
 
 외부손님
 
-<input type="number" id="guestCount" value="0">
+<input type="number" id="guestCount" value="0" min="0">
 
 <br><br>
 
 <button id="saveButton" onclick="saveMeal()">저장</button>
+
 <p id="deadlineMessage"></p>
 
 <hr>
@@ -149,9 +176,12 @@ button {
 </button>
 
 </div>
+
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
     getFirestore,
@@ -162,19 +192,26 @@ import {
 }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+
 const firebaseConfig = {
-  apiKey: "AIzaSyBGohbnyBMtrOtp9DIB7IvnwM-BH2malSs",
-  authDomain: "lunch-manager-af859.firebaseapp.com",
-  projectId: "lunch-manager-af859",
-  storageBucket: "lunch-manager-af859.firebasestorage.app",
-  messagingSenderId: "934755274282",
-  appId: "1:934755274282:web:44457ae291909bb562bd53",
-  measurementId: "G-19SPF5JMG4"
+    apiKey: "AIzaSyBGohbnyBMtrOtp9DIB7IvnwM-BH2malSs",
+    authDomain: "lunch-manager-af859.firebaseapp.com",
+    projectId: "lunch-manager-af859",
+    storageBucket: "lunch-manager-af859.firebasestorage.app",
+    messagingSenderId: "934755274282",
+    appId: "1:934755274282:web:44457ae291909bb562bd53",
+    measurementId: "G-19SPF5JMG4"
 };
 
-const app = initializeApp(firebaseConfig);
 
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+
+// ==========================
+// 부서 자동 표시
+// ==========================
+
 function updateDepartment() {
 
     let name =
@@ -182,108 +219,147 @@ function updateDepartment() {
 
     let department = "";
 
+
     // 보상관리부
     if([
-        "이승헌","박상익","이주형","민성환",
-        "서준호","하유빈","김민영",
-        "박종희","임정은","최기훈","윤지원"
+        "이승헌",
+        "박상익",
+        "이주형",
+        "민성환",
+        "서준호",
+        "하유빈",
+        "김민영",
+        "박종희",
+        "임정은",
+        "최기훈"
     ].includes(name)){
 
         department = "보상관리부";
 
     }
 
+
     // 공사관리부
     else if([
-        "오인환","천병희","허동일","김철홍",
-        "김형록","김경식","양지석",
-        "김주현","장은정","김송주","김용준"
+        "오인환",
+        "천병희",
+        "허동일",
+        "김철홍",
+        "김형록",
+        "김경식",
+        "양지석",
+        "김주현",
+        "장은정",
+        "김용준",
+        "주승호"
     ].includes(name)){
 
         department = "공사관리부";
 
     }
 
+
     // 품질안전부
     else if([
-        "조재성","김찬종","김중현","김정균",
-        "이한얼","김창민","박지윤",
-        "장준희","이경태","고병국","박현중","임대경"
+        "조재성",
+        "김찬종",
+        "김중현",
+        "김정균",
+        "이한얼",
+        "김창민",
+        "박지윤",
+        "장준희",
+        "이경태",
+        "고병국",
+        "임대경"
     ].includes(name)){
 
         department = "품질안전부";
 
     }
 
+
     // 감리단
     else if([
-        "장병천","김승준","강도영"
+        "장병천",
+        "김승준",
+        "강도영"
     ].includes(name)){
 
         department = "감리단";
 
     }
 
+
     document.getElementById("department").innerText =
         department;
 }
+
+
+// ==========================
+// 페이지 시작
+// ==========================
+
 window.onload = function() {
 
-    let savedName = localStorage.getItem("userName");
+    let savedName =
+        localStorage.getItem("userName");
 
-if(savedName){
+    if(savedName){
 
-    document.getElementById("userName").value = savedName;
-}
-    
-const today = new Date();
+        document.getElementById("userName").value =
+            savedName;
 
-document.getElementById("mealDate").value =
-    today.toISOString().split("T")[0];
+    }
 
-updateDepartment();
 
-let mealStatus = localStorage.getItem("mealStatus");
-let guestCount = localStorage.getItem("guestCount");
-let saveTime = localStorage.getItem("saveTime");
+    const today = new Date();
 
-if(mealStatus){
+    document.getElementById("mealDate").value =
+        today.toISOString().split("T")[0];
 
-const status = document.getElementById("status");
 
-status.className = "status-card status-ok";
+    updateDepartment();
 
-status.innerHTML = `
-<div class="status-title">
-✅ ${meal.value} 신청 완료
-</div>
 
-<div class="status-detail">
-👤 ${name}<br>
-🍱 ${meal.value}<br>
-👥 외부손님 ${guest}명<br>
-🕒 ${time}
-</div>
-`;
+    let now = new Date();
 
-}
+    if(now.getHours() >= 10){
 
-updateDepartment();
+        document.getElementById("deadlineMessage").innerHTML =
+            "<b>중식 신청이 마감되었습니다.</b>";
 
-}
+    }
+
+};
+
+
+// ==========================
+// 신청 저장
+// ==========================
 
 async function saveMeal() {
 
     updateDepartment();
 
-    let name = document.getElementById("userName").value;
 
-    localStorage.setItem("userName", name);
+    let name =
+        document.getElementById("userName").value;
+
+
+    localStorage.setItem(
+        "userName",
+        name
+    );
+
 
     let meal =
-        document.querySelector('input[name="meal"]:checked');
+        document.querySelector(
+            'input[name="meal"]:checked'
+        );
 
-    if (!meal) {
+
+    if(!meal){
 
         alert("식사 여부를 선택해주세요.");
 
@@ -291,151 +367,237 @@ async function saveMeal() {
 
     }
 
-    
 
     let guest =
         document.getElementById("guestCount").value;
 
+
     let mealDate =
-    document.getElementById("mealDate").value;
+        document.getElementById("mealDate").value;
+
 
     let now = new Date();
+
 
     let time =
         now.getHours() + ":" +
         String(now.getMinutes()).padStart(2, "0");
 
-    // 저장
-    localStorage.setItem("mealStatus", meal.value);
-    localStorage.setItem("guestCount", guest);
-    localStorage.setItem("saveTime", time);
-await setDoc(
-    doc(
-        db,
-        "mealResponses",
-        name + "_" + mealDate
-    ),
-    {
-    name: name,
-    mealDate: mealDate,
-    meal: meal.value,
-    guest: Number(guest),
-    answer: "Y",
-    saveTime: time,
-    department:
-        document.getElementById("department")
-            .innerText
+
+    const department =
+        document.getElementById("department").innerText;
+
+
+    // Firebase 저장
+    await setDoc(
+
+        doc(
+            db,
+            "mealResponses",
+            name + "_" + mealDate
+        ),
+
+        {
+            name: name,
+            mealDate: mealDate,
+            meal: meal.value,
+            guest: Number(guest),
+            answer: "Y",
+            saveTime: time,
+            department: department
+        }
+
+    );
+
+
+    // 신청 상태 표시
+    const status =
+        document.getElementById("status");
+
+
+    status.className =
+        "status-card status-ok";
+
+
+    status.innerHTML = `
+
+        <div class="status-title">
+            ✅ ${meal.value} 신청 완료
+        </div>
+
+        <div class="status-detail">
+            👤 ${name}<br>
+            📅 ${mealDate}<br>
+            🏢 ${department}<br>
+            👥 외부손님 ${guest}명<br>
+            🕒 ${time}
+        </div>
+
+    `;
+
+
+    alert(
+        name + "님의 신청이 완료되었습니다."
+    );
+
 }
-);
 
-    // 화면 표시
-   const status = document.getElementById("status");
 
-status.className = "status-card status-ok";
-
-status.innerHTML = `
-<div class="status-title">
-✅ ${data.meal} 신청 완료
-</div>
-
-<div class="status-detail">
-👤 ${data.name}<br>
-📅 ${data.mealDate}<br>
-👥 외부손님 ${data.guest}명<br>
-🕒 ${data.saveTime}
-</div>
-`;
-
-    alert(name + "님의 신청이 완료되었습니다.");
-
-}
+// ==========================
+// 내 신청내역 조회
+// ==========================
 
 async function loadMyStatus(){
 
     const name =
-    document.getElementById("userName").value;
+        document.getElementById("userName").value;
+
 
     const mealDate =
-    document.getElementById("mealDate").value;
+        document.getElementById("mealDate").value;
+
 
     const docRef =
-    doc(
-        db,
-        "mealResponses",
-        name + "_" + mealDate
-    );
+        doc(
+            db,
+            "mealResponses",
+            name + "_" + mealDate
+        );
+
 
     const docSnap =
-    await getDoc(docRef);
+        await getDoc(docRef);
+
+
+    const status =
+        document.getElementById("status");
+
 
     if(!docSnap.exists()){
 
-  const status = document.getElementById("status");
+        status.className =
+            "status-card status-no";
 
-status.className = "status-card status-no";
 
-status.innerHTML = `
-<div class="status-title">
-❌ 미신청
-</div>
+        status.innerHTML = `
 
-<div class="status-detail">
-오늘 신청내역이 없습니다.
-</div>
-`;
+            <div class="status-title">
+                ❌ 미신청
+            </div>
+
+            <div class="status-detail">
+                해당 날짜의 신청내역이 없습니다.
+            </div>
+
+        `;
 
         return;
+
     }
 
-    const data = docSnap.data();
 
-    document.getElementById("status").innerHTML =
-        data.meal +
-        " 신청 완료<br>" +
-        "외부손님 : " +
-        data.guest +
-        "명<br>" +
-        "저장시간 : " +
-        data.saveTime;
+    const data =
+        docSnap.data();
+
+
+    status.className =
+        "status-card status-ok";
+
+
+    status.innerHTML = `
+
+        <div class="status-title">
+            ✅ ${data.meal} 신청 완료
+        </div>
+
+        <div class="status-detail">
+            👤 ${data.name}<br>
+            📅 ${data.mealDate}<br>
+            🏢 ${data.department}<br>
+            👥 외부손님 ${data.guest}명<br>
+            🕒 ${data.saveTime}
+        </div>
+
+    `;
 
 }
+
+
+// ==========================
+// 신청 취소
+// ==========================
 
 async function cancelMyMeal(){
 
     const name =
-    document.getElementById("userName").value;
+        document.getElementById("userName").value;
+
 
     const mealDate =
-    document.getElementById("mealDate").value;
+        document.getElementById("mealDate").value;
+
 
     const ok = confirm(
         "신청을 취소하시겠습니까?"
     );
 
+
     if(!ok){
+
         return;
+
     }
 
+
     await deleteDoc(
+
         doc(
             db,
             "mealResponses",
             name + "_" + mealDate
         )
+
     );
 
-    document.getElementById("status").innerHTML =
-    "신청 취소 완료";
 
-    alert("신청이 취소되었습니다.");
+    const status =
+        document.getElementById("status");
+
+
+    status.className =
+        "status-card status-no";
+
+
+    status.innerHTML = `
+
+        <div class="status-title">
+            ❌ 미신청
+        </div>
+
+        <div class="status-detail">
+            신청이 취소되었습니다.
+        </div>
+
+    `;
+
+
+    alert(
+        "신청이 취소되었습니다."
+    );
+
 }
 
-window.saveMeal = saveMeal;
-window.loadMyStatus = loadMyStatus;
-window.cancelMyMeal = cancelMyMeal;
+
+window.saveMeal =
+    saveMeal;
+
+window.loadMyStatus =
+    loadMyStatus;
+
+window.cancelMyMeal =
+    cancelMyMeal;
 
 </script>
 
 </body>
 </html>
-<!-- update -->
